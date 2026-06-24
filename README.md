@@ -1,17 +1,37 @@
-# family_food_tracker
+# Family Food Tracker
 
-A new Flutter project.
+A responsive Flutter application for tracking family food preferences. The same
+codebase supports Android, iOS, and web.
 
-## Getting Started
+## Run locally
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+To run the web app specifically:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+flutter run -d chrome
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Build the web app for GitHub Pages
+
+GitHub Pages serves the checked-in Flutter web build from `docs/`. From the
+repository root, run:
+
+```sh
+flutter build web \
+  --release \
+  --base-href /family_food_tracker/ \
+  --output docs
+```
+
+Commit the regenerated `docs/` files with the source changes. In the GitHub
+repository settings, configure Pages to deploy from the `main` branch and the
+`/docs` folder.
+
+The published app is available at:
+
+<https://dhdsoftwaredev.github.io/family_food_tracker/>
