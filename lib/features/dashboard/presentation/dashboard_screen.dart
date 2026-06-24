@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../../common/widgets/responsive_layout.dart';
-import 'package:fl_chart/fl_chart.dart';
+import '../../people/data/people_data.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -8,154 +9,151 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ResponsiveLayout(
-      mobile: _DashboardMobile(),
-      tablet: _DashboardTablet(),
-      desktop: _DashboardDesktop(),
+      mobile: _InsightsDashboard(padding: 16),
+      tablet: _InsightsDashboard(padding: 24),
+      desktop: _InsightsDashboard(padding: 32),
     );
   }
 }
 
-//
-// ----------------------
-// MOBILE LAYOUT
-// ----------------------
-//
-class _DashboardMobile extends StatelessWidget {
-  const _DashboardMobile();
+class _InsightsDashboard extends StatelessWidget {
+  final double padding;
+
+  const _InsightsDashboard({required this.padding});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          _HeroCard(),
-          SizedBox(height: 20),
-          _QuickStatsGrid(),
-          SizedBox(height: 20),
-          _WeeklyChart(),
-          SizedBox(height: 20),
-          _RecentActivityList(),
-        ],
-      ),
-    );
-  }
-}
+    final showAppBar = !ResponsiveLayout.isDesktop(context);
 
-//
-// ----------------------
-// TABLET LAYOUT
-// ----------------------
-//
-class _DashboardTablet extends StatelessWidget {
-  const _DashboardTablet();
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          children: const [
-            Expanded(
-              flex: 2,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _HeroCard(),
-                    SizedBox(height: 20),
-                    _QuickStatsGrid(),
-                    SizedBox(height: 20),
-                    _RecentActivityList(),
-                  ],
+      appBar: showAppBar ? AppBar(title: const Text('Insights')) : null,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = constraints.maxWidth - (padding * 2);
+          final columns = availableWidth >= 1100
+              ? 3
+              : availableWidth >= 680
+              ? 2
+              : 1;
+          final spacing = columns == 1 ? 0.0 : 16.0;
+          final cardWidth =
+              (availableWidth - (spacing * (columns - 1))) / columns;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(padding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Food insights',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-              ),
+                const SizedBox(height: 6),
+                Text(
+                  'Patterns and likely next choices based on each person\'s '
+                  'preferences, likes, and dislikes.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 24),
+                Wrap(
+                  spacing: spacing,
+                  runSpacing: 16,
+                  children: peopleProfiles
+                      .map(
+                        (person) => SizedBox(
+                          width: cardWidth,
+                          child: _PersonInsightCard(person: person),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
             ),
-            SizedBox(width: 24),
-            Expanded(flex: 3, child: _WeeklyChart()),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
-//
-// ----------------------
-// DESKTOP LAYOUT
-// ----------------------
-//
-class _DashboardDesktop extends StatelessWidget {
-  const _DashboardDesktop();
+class _PersonInsightCard extends StatelessWidget {
+  final PersonProfile person;
+
+  const _PersonInsightCard({required this.person});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Row(
-          children: const [
-            Expanded(
-              flex: 2,
-              child: Column(
-                children: [
-                  _HeroCard(),
-                  SizedBox(height: 20),
-                  _QuickStatsGrid(),
-                  SizedBox(height: 20),
-                  Expanded(child: _RecentActivityList()),
-                ],
-              ),
-            ),
-            SizedBox(width: 32),
-            Expanded(flex: 3, child: _WeeklyChart()),
-          ],
-        ),
-      ),
-    );
-  }
-}
+    final colors = Theme.of(context).colorScheme;
 
-//
-// ----------------------
-// COMPONENTS
-// ----------------------
-//
-
-class _HeroCard extends StatelessWidget {
-  const _HeroCard();
-
-  @override
-  Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.fastfood, size: 48),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Welcome back, DHD!",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headlineSmall,
+            Row(
+              children: [
+                CircleAvatar(child: Icon(person.icon)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        person.name,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(person.summary),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Here’s your food activity summary",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _InsightSection(
+              icon: Icons.insights,
+              label: 'Pattern',
+              text: person.pattern,
+            ),
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: colors.primaryContainer,
+                borderRadius: BorderRadius.circular(8),
               ),
+              child: _InsightSection(
+                icon: Icons.auto_awesome,
+                label: 'Prediction',
+                text: person.prediction,
+                iconColor: colors.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text('Preferences', style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: person.preferences
+                  .map((item) => Chip(label: Text(item)))
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+            _PreferenceLine(
+              icon: Icons.thumb_up_outlined,
+              label: 'Likes',
+              values: person.likes,
+              color: colors.primary,
+            ),
+            const SizedBox(height: 10),
+            _PreferenceLine(
+              icon: Icons.block,
+              label: 'Avoids',
+              values: person.dislikes,
+              color: colors.error,
             ),
           ],
         ),
@@ -164,118 +162,66 @@ class _HeroCard extends StatelessWidget {
   }
 }
 
-class _QuickStatsGrid extends StatelessWidget {
-  const _QuickStatsGrid();
+class _InsightSection extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String text;
+  final Color? iconColor;
+
+  const _InsightSection({
+    required this.icon,
+    required this.label,
+    required this.text,
+    this.iconColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = ResponsiveLayout.isDesktop(context);
-
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: isDesktop ? 4 : 2,
-      childAspectRatio: isDesktop ? 1.8 : 1.2,
-      children: const [
-        _StatCard(label: "Foods Logged", value: "42", icon: Icons.list),
-        _StatCard(label: "People", value: "6", icon: Icons.people),
-        _StatCard(label: "Attributes", value: "18", icon: Icons.category),
-        _StatCard(label: "Favorites", value: "9", icon: Icons.favorite),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: iconColor),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(height: 3),
+              Text(text),
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String label;
-  final String value;
+class _PreferenceLine extends StatelessWidget {
   final IconData icon;
+  final String label;
+  final List<String> values;
+  final Color color;
 
-  const _StatCard({
-    required this.label,
-    required this.value,
+  const _PreferenceLine({
     required this.icon,
+    required this.label,
+    required this.values,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(icon, size: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  Text(label, maxLines: 2, overflow: TextOverflow.ellipsis),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WeeklyChart extends StatelessWidget {
-  const _WeeklyChart();
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BarChart(
-          BarChartData(
-            barGroups: [
-              BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 3)]),
-              BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 5)]),
-              BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 2)]),
-              BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 4)]),
-              BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 6)]),
-            ],
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: color),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            '$label: ${values.join(', ')}',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RecentActivityList extends StatelessWidget {
-  const _RecentActivityList();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: const [
-        ListTile(
-          leading: Icon(Icons.local_pizza),
-          title: Text("Pizza added"),
-          subtitle: Text("Today"),
-        ),
-        ListTile(
-          leading: Icon(Icons.eco),
-          title: Text("Salad added"),
-          subtitle: Text("Yesterday"),
-        ),
-        ListTile(
-          leading: Icon(Icons.lunch_dining),
-          title: Text("Burger added"),
-          subtitle: Text("2 days ago"),
         ),
       ],
     );

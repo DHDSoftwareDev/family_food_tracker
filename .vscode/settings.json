@@ -1,0 +1,11 @@
+{
+  "dart.analysisExcludedFolders": [
+    "build"
+  ],
+  "files.associations": {
+    "**/build/**/NOTICES": "plaintext"
+  },
+  "search.exclude": {
+    "**/build": true
+  }
+}
