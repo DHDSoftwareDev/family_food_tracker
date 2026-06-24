@@ -1403,6 +1403,9 @@ PODS:
   - nanopb/encode (3.30910.0)
   - PromisesObjC (2.4.1)
   - RecaptchaInterop (101.0.0)
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -1410,6 +1413,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -1448,15 +1452,17 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
-  cloud_firestore: f7ca38720511e65eede1b19041948ce35f66ebb7
+  cloud_firestore: 6413b4f717c368edb9c94214547da4c65c5a2fd9
   Firebase: a8539b633d474fbeb654c7043f9c1649e274045b
-  firebase_auth: b9077bef727b19b519285a98f7b97d2ea78a0d78
-  firebase_core: 2f51bd38a4e012634cf229f81dc9e2506df32f1c
-  firebase_messaging: c8d9730ad2cf85f50f1e16be82ffebcb9a20a792
+  firebase_auth: 78f0e9fa5dd3dce7e44164c53d2702eeffba360a
+  firebase_core: fc23178af8ea070194d09031ae4198a9608a3d22
+  firebase_messaging: 870b2939a7f7cc52bc38ca0250127c45b42f4bad
   FirebaseAppCheckInterop: 5083c9acf65f206832fe659e1c676b7bc3d55e8a
   FirebaseAuth: 6d1d4e5875d93f82e669bee6b05a70a642025b58
   FirebaseAuthInterop: 0778f5f24d6cccd6d67ef45832fe9c67a0b944ea
@@ -1478,6 +1484,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
 
 PODFILE CHECKSUM: e9b607a6e73b160e44980c34c4057f44fd5a88d2
 
